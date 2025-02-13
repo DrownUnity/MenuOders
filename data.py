@@ -29,4 +29,14 @@ order_items_grouped = (
 
 order_items_grouped.plot(kind='barh', y='total_revenue')
 
-print(plt.show())
+# Category analysis 
+
+order_items_grouped_category = (
+    order_items
+    .groupby("category")
+    .agg({'total_revenue': 'sum'})
+    .sort_values(by='total_revenue'))
+
+order_items_grouped_category.plot(kind='barh', y='total_revenue')
+
+
