@@ -17,7 +17,6 @@ order = order.dropna()
 # Join data
 
 order_items = order.merge(menu, how='left', left_on='item_id', right_on='menu_item_id').drop('menu_item_id', axis=1)
-order_items["hours"] = order_items.order_datetime.dt.hour
 
 # Add columns 
 
@@ -25,21 +24,19 @@ order_items['sales_taxes'] = (order_items.price * 0.08).round(2)
 order_items['total_revenue'] = (order_items.price + order_items.sales_taxes).round(2)
 order_items['weekday'] = order_items.order_datetime.dt.day_of_week
 
-# Hours
+# Day
 
-busiest_hour = order_items.groupby("hours")['total_revenue'].sum()
-sns.heatmap(
-    order_items.pivot_table(
-        index="hours",
-        columns="weekday",
-        values="total_revenue",
-        aggfunc="sum"
-    )
-)
+busiest_day = order_items.groupby('weekday')['total_revenue'].sum()
 
-plt.title('Total Revenue by Hour and Weekday')
+days_of_week = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+
+busiest_day.plot(kind='bar', figsize=(10, 6), width=0.5)
+
+plt.xticks(ticks=range(7), labels=days_of_week, rotation=45)
 plt.xlabel('Day of the Week')
-plt.ylabel('Hour of the Day')
+plt.ylabel('Total Revenue')
+plt.title('Total Revenue by Weekday')
 plt.tight_layout()
 
 plt.show()
+
